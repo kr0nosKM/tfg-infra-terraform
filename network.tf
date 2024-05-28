@@ -65,8 +65,8 @@ resource "openstack_networking_subnet_v2" "s_bbdd" {
 }
 
 #- PUERTOS -#
-resource "openstack_networking_port_v2" "p_1" {
-  name           = "p_1"
+resource "openstack_networking_port_v2" "p_web_priv" {
+  name           = "p_web_priv"
   network_id     = openstack_networking_network_v2.n_web.id
   admin_state_up = "true"
   fixed_ip{
@@ -75,8 +75,8 @@ resource "openstack_networking_port_v2" "p_1" {
 }
 
 # IP Flotante
-resource "openstack_networking_port_v2" "p_2" {
-  name           = "p_2"
+resource "openstack_networking_port_v2" "p_web_pub" {
+  name           = "p_web_pub"
   network_id     = openstack_networking_network_v2.n_pub.id
   admin_state_up = "true"
   fixed_ip{
