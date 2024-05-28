@@ -1,1 +1,7 @@
 .terraform/
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!*.tf
