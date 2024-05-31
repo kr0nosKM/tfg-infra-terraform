@@ -25,6 +25,7 @@ resource "openstack_networking_network_v2" "n_pub" {
 resource "openstack_networking_network_v2" "n_web" {
   name           = "n_web"
   admin_state_up = true
+  
 }
 
 resource "openstack_networking_network_v2" "n_bbdd"{
@@ -51,6 +52,7 @@ resource "openstack_networking_subnet_v2" "s_web" {
   network_id      = openstack_networking_network_v2.n_web.id
   cidr            = "10.0.0.0/24"
   ip_version      = 4
+  enable_dhcp = false
  #gateway_ip      = "10.0.0.1/24"
 
 }

@@ -1,7 +1,7 @@
-
-# Ignore everything
+# Ignorar todos los ficheros
 *
 
-# But not these files...
+# Menos los ficheros que acaben en las siguientes extensiones
 !.gitignore
 !*.tf
+!*.sh
