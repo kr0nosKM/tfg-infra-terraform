@@ -1,7 +1,11 @@
 # Ignorar todos los ficheros
 *
 
-# Menos los ficheros que acaben en las siguientes extensiones
+# Menos los siguientes directorios o los ficheros que acaben en las siguientes extensiones
+!ansible
+!ansible/*
+!scripts
+
 !.gitignore
 !*.tf
 !*.sh
