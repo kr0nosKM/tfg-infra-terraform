@@ -17,36 +17,23 @@ resource "openstack_networking_router_interface_v2" "r_int_bbdd" {
   subnet_id = openstack_networking_subnet_v2.s_bbdd.id
 }
 
-# resource "openstack_networking_router_interface_v2" "r_int_pub" {
-#   router_id = openstack_networking_router_v2.r_general.id
-#   subnet_id = openstack_networking_subnet_v2.s_pub.id
+resource "openstack_networking_router_interface_v2" "r_int_mstr" {
   
-# }
-/*
-resource "openstack_networking_subnet_route_v2" "subnet_route_1" {
-  subnet_id        = openstack_networking_subnet_v2.s_web.id
-  destination_cidr = openstack_networking_subnet_v2.s_pub.cidr
-  next_hop         = openstack_networking_subnet_v2.s_pub.gateway_ip
+  router_id = openstack_networking_router_v2.r_general.id
+  subnet_id = openstack_networking_subnet_v2.s_web.id
 }
-*/
 
+resource "openstack_networking_router_route_v2" "r_general_ruta_global" {
+  depends_on       = [openstack_networking_router_interface_v2.r_int_web, openstack_networking_router_interface_v2.r_int_bbdd, openstack_networking_router_interface_v2.r_int_mstr]
+  router_id        = openstack_networking_router_v2.r_general.id
+  destination_cidr = "0.0.0.0/0"
+  next_hop         = "172.24.4.1"
+}
 
 #-- REDES --#
-
 data "openstack_networking_network_v2" "public" {
   name = "public"
 }
-
-
-# resource "openstack_networking_network_v2" "n_pub" {
-#   name           = "n_pub"
-#   admin_state_up = true
-#   external = true
-#   segments {
-#     network_type = "flat"
-#     #sphysical_network = external
-#   }
-# }
 
 resource "openstack_networking_network_v2" "n_web" {
   name           = "n_web"
@@ -58,28 +45,18 @@ resource "openstack_networking_network_v2" "n_bbdd"{
   admin_state_up = true
 }
 
+resource "openstack_networking_network_v2" "n_mstr"{
+  name           = "n_mstr"
+  admin_state_up = true
+}
+
 #-- SUBREDES --#
-# resource "openstack_networking_subnet_v2" "s_pub" {
-#   name            = "s_pub"
-#   network_id       = openstack_networking_network_v2.n_pub.id
-#   cidr             = "172.30.8.0/24"
-#   ip_version       = 4
-#   gateway_ip       = "172.30.8.1"
-#   enable_dhcp      = false
-
-#   allocation_pool {
-#     start = "172.30.8.10"
-#     end   = "172.30.8.200"
-#   }
-# }
-
 resource "openstack_networking_subnet_v2" "s_web" {
   name            = "s_web"
   network_id      = openstack_networking_network_v2.n_web.id
   cidr            = "10.0.0.0/24"
   ip_version      = 4
   enable_dhcp = true
-
 }
 
 resource "openstack_networking_subnet_v2" "s_bbdd" {
@@ -88,6 +65,14 @@ resource "openstack_networking_subnet_v2" "s_bbdd" {
   cidr            = "10.1.0.0/24"
   ip_version      = 4
 }
+
+resource "openstack_networking_subnet_v2" "s_mstr" {
+  name            = "s_bbdd"
+  network_id      = openstack_networking_network_v2.n_bbdd.id
+  cidr            = "10.1.0.0/24"
+  ip_version      = 4
+}
+
 
 #- PUERTOS -#
 resource "openstack_networking_port_v2" "p_web_priv" {
@@ -108,22 +93,11 @@ resource "openstack_networking_port_v2" "p_bbdd_priv" {
   }
 }
 
-# # Puerto IP Flotante
-# resource "openstack_networking_port_v2" "p_web_pub" {
-#   name           = "p_web_pub"
-#   network_id     = openstack_networking_network_v2.n_pub.id
-#   admin_state_up = "true"
-#   fixed_ip{
-#     subnet_id = openstack_networking_subnet_v2.s_pub.id
-#   }
-# }
-
-# Puerto IP Flotante
-# resource "openstack_networking_port_v2" "p_web_pub" {
-#   name           = "p_web_pub"
-#   network_id     = openstack_networking_network_v2.n_web.id
-#   admin_state_up = "true"
-#   fixed_ip{
-#     subnet_id = openstack_networking_subnet_v2.s_web.id
-#   }
-# }
+resource "openstack_networking_port_v2" "p_mstr_priv" {
+  name           = "p_mstr_priv"
+  network_id     = openstack_networking_network_v2.n_mstr.id
+  admin_state_up = "true"
+  fixed_ip{
+    subnet_id = openstack_networking_subnet_v2.s_mstr.id
+  }
+}
